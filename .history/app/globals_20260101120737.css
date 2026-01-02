@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+body {
+  background-color: #0F172A; /* mood.dark */
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+/* Utilitário para o efeito de Vidro (Glassmorphism) */
+.glass {
+  background: rgba(30, 41, 59, 0.4); /* mood.gray com transparência */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}

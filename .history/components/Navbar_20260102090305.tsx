@@ -1,0 +1,140 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import Image from "next/image";
+
+// Componente NavLink (Link com sublinhado azul)
+const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
+  <Link 
+    href={href} 
+    className="relative group text-white transition-colors font-medium text-sm"
+  >
+    {children}
+    <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-blue-default transition-all duration-300 ease-out group-hover:w-full" />
+  </Link>
+);
+
+export function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    // Container Principal
+    <div className="relative top-0 left-0 w-full z-50 px-4 py-8">
+      {/* MUDANÇA AQUI:
+         1. 'flex justify-between' para Mobile (Logo esq, Menu dir).
+         2. 'md:grid md:grid-cols-3' para Desktop (Divide em 3 partes iguais).
+      */}
+      <div className="max-w-[1600px] mx-auto flex justify-between items-center md:grid md:grid-cols-3">
+        
+        {/* =======================
+            1. LOGO (Coluna 1 - Alinhado à Esquerda)
+           ======================= */}
+        <div className="flex justify-start">
+          <Link href="/" className="flex items-center gap-1 z-50 group">
+            <div className="relative w-8 h-8 lg:w-9 lg:h-9 flex items-center justify-center">
+              <Image
+                src="/logo.svg"
+                alt="Logo MoodMatrix"
+                fill
+                className="object-contain"
+              />
+            </div>
+            
+            <span className="text-white font-medium text-xs font-museo tracking-wider">
+              Mood<span>Matrix</span>
+            </span>
+          </Link>
+        </div>
+
+        {/* =======================
+            2. PÍLULA CENTRAL (Coluna 2 - Centralizado)
+            - Removi o 'absolute', 'left-1/2', etc.
+            - Agora ele ocupa o centro naturalmente.
+           ======================= */}
+        <div className="hidden md:flex justify-center">
+          <nav className="flex items-center gap-8 pl-8 pr-8 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-lg shadow-black/20">
+            {/* Links */}
+            <div className="flex items-center gap-6 font-poppins font-bold">
+              <NavLink href="/">Início</NavLink>
+              <NavLink href="/dashboard">Dashboard</NavLink>
+              <NavLink href="#sobre">Sobre</NavLink>
+            </div>
+
+            {/* Botão Analisar */}
+            <Link href="/analisar">
+              <button className="bg-white hover:bg-neon-orange text-black font-poppins font-bold text-sm px-5 py-2 rounded-md transition-all duration-200 shadow-sm hover:shadow-md">
+                Analisar
+              </button>
+            </Link>
+          </nav>
+        </div>
+
+        {/* =======================
+            3. AVATAR / MENU (Coluna 3 - Alinhado à Direita)
+           ======================= */}
+        <div className="flex justify-end items-center gap-4 z-50">
+          
+          {/* Avatar (Desktop) */}
+          <div className="hidden md:flex items-center gap-2 pl-4">
+            <div className="text-right hidden lg:block">
+              <p className="font-poppins text-sm font-bold text-white">Olá, Diogo</p>
+            </div>
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-neon-green to-emerald-600 flex items-center justify-center text-white font-bold border-2 border-mood-dark shadow-md">
+              D
+            </div>
+          </div>
+
+          {/* Botão Hambúrguer (Mobile) */}
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden text-white hover:text-neon-blue transition p-1"
+          >
+            {isOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
+
+      </div>
+
+      {/* =======================
+          4. MENU MOBILE DROPDOWN
+         ======================= */}
+      {isOpen && (
+        <div className="absolute top-24 left-4 right-4 z-40 bg-mood-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl animate-in fade-in slide-in-from-top-5">
+          
+          <div className="flex flex-col space-y-1">
+            <Link href="/" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors text-sm font-medium">
+              Início
+            </Link>
+            <Link href="/dashboard" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors text-sm font-medium">
+              Dashboard
+            </Link>
+            <Link href="#sobre" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors text-sm font-medium">
+              Sobre
+            </Link>
+          </div>
+
+          <div className="my-3 border-t border-white/10" />
+
+          <Link href="/analisar" onClick={() => setIsOpen(false)}>
+            <button className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 font-medium text-sm py-3 rounded-lg transition-all duration-200">
+              Analisar
+            </button>
+          </Link>
+
+          <div className="mt-4 pt-4 border-t border-white/10 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-neon-green to-emerald-600 flex items-center justify-center text-white font-bold text-xs">
+              D
+            </div>
+            <div>
+              <p className="text-sm font-bold text-white">Diogo</p>
+              <p className="text-xs text-gray-400">diogo@exemplo.com</p>
+            </div>
+          </div>
+
+        </div>
+      )}
+    </div>
+  );
+}

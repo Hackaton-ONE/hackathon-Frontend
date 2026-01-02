@@ -1,0 +1,140 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+
+// ✅ Componente NavLink (Link com sublinhado azul para Desktop)
+const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
+  <Link 
+    href={href} 
+    className="relative group text-gray-300 hover:text-white transition-colors font-medium text-sm"
+  >
+    {children}
+    <span className="
+      absolute -bottom-1 left-0 
+      w-0 h-[2px] 
+      bg-blue-DEFAULT 
+      transition-all duration-300 ease-out 
+      group-hover:w-full
+    " />
+  </Link>
+);
+
+export function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="fixed top-6 left-0 w-full flex justify-center z-50">
+      
+      {/* === NAVBAR DESKTOP (A Pílula Flutuante) === */}
+      <nav className="
+        relative
+        flex items-center justify-between
+        gap-8
+        pl-6 pr-2 py-2
+        rounded-full
+        bg-white/10
+        backdrop-blur-md
+        border border-white/20
+        shadow-lg shadow-black/10
+      ">
+        
+        {/* Links Desktop */}
+        <div className="hidden md:flex items-center gap-6 font-poppins">
+          <NavLink href="/">Início</NavLink>
+          <NavLink href="/dashboard">Dashboard</NavLink>
+          <NavLink href="#sobre">Sobre</NavLink>
+        </div>
+
+        {/* Botão Hambúrguer Mobile */}
+        <div className="md:hidden flex items-center pr-4">
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-white hover:text-blue-light transition"
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        {/* Botão de Ação (Sempre visível na pílula) */}
+        <Link href="/analisar">
+          <button className="
+            bg-white text-mood-dark 
+            hover:bg-gray-200
+            font-poppins font-bold text-sm
+            px-5 py-2.5
+            rounded-full
+            transition-all duration-200
+            shadow-md
+          ">
+            Analisar
+          </button>
+        </Link>
+      </nav>
+
+      {/* === MENU MOBILE DROPDOWN (Estilo atualizado conforme referência) === */}
+      {isOpen && (
+        <div className="
+          absolute top-20 
+          w-[90%] max-w-sm 
+          /* Fundo escuro com vidro (Igual referência) */
+          bg-mood-dark/95 backdrop-blur-xl 
+          border border-white/10 
+          rounded-2xl 
+          p-4 
+          shadow-2xl
+          animate-in fade-in slide-in-from-top-5
+        ">
+          
+          {/* Lista de Links Mobile */}
+          <div className="flex flex-col space-y-1">
+            <Link 
+              href="/" 
+              onClick={() => setIsOpen(false)} 
+              className="block px-4 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors text-sm font-medium"
+            >
+              Início
+            </Link>
+            <Link 
+              href="/dashboard" 
+              onClick={() => setIsOpen(false)} 
+              className="block px-4 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors text-sm font-medium"
+            >
+              Dashboard
+            </Link>
+            <Link 
+              href="#sobre" 
+              onClick={() => setIsOpen(false)} 
+              className="block px-4 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors text-sm font-medium"
+            >
+              Sobre
+            </Link>
+          </div>
+
+          {/* Divisória e Botão Secundário (Igual referência) */}
+          <div className="mt-3 pt-3 border-t border-white/10">
+            <Link href="/analisar" onClick={() => setIsOpen(false)}>
+              <button className="
+                w-full 
+                bg-white/10 hover:bg-white/20 
+                text-white 
+                border border-white/20
+                font-medium text-sm
+                py-2.5
+                rounded-lg
+                transition-all duration-200
+              ">
+                Começar Análise
+              </button>
+            </Link>
+          </div>
+
+          {/* Obs: Não adicionei o Avatar/Perfil pois você ainda não tem esse componente configurado, 
+             mas a estrutura está pronta para receber se precisar. */}
+             
+        </div>
+      )}
+    </div>
+  );
+}
