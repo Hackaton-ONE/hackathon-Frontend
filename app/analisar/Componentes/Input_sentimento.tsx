@@ -1,11 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import { ResultadoIA } from "../types";
 
-export default function Input_sentimento() {
+type InputSentimentoProps = {
+  setResultado: React.Dispatch<React.SetStateAction<ResultadoIA | null>>;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+
+export default function Input_sentimento({ setResultado, setLoading }: InputSentimentoProps) {
     
     const [text, setText] = useState("");
 
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        try {
+          setLoading(true);
+          const res = await fetch("/sua-api/analisar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ comentarios: text }),
+          });
+      
+          const data = await res.json();
+          setResultado(data);
+        } finally {
+          setLoading(false);
+        }
+    }
     return (
             <section className="mt-24 flex w-full justify-center">
                 <div className="w-[900px] h-[450px] rounded-2xl border border-white bg-blue-600/35 p-10 shadow-xl backdrop-blur-md">
