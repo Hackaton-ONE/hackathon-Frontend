@@ -56,7 +56,7 @@ export function Navbar() {
             <div className="flex items-center gap-6 font-poppins font-bold">
               <NavLink href="/">Início</NavLink>
               <NavLink href="/dashboard">Dashboard</NavLink>
-              <NavLink href="#sobre">Sobre</NavLink>
+              <NavLink href="/sobre-nos">Sobre</NavLink>
             </div>
 
             {/* Botão Analisar */}
@@ -107,7 +107,7 @@ export function Navbar() {
             <Link href="/dashboard" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-white/90 hover:text-white hover:bg-blue-default rounded-lg transition-colors text-sm font-medium">
               Dashboard
             </Link>
-            <Link href="#sobre" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-white/90 hover:text-white hover:bg-blue-default rounded-lg transition-colors text-sm font-medium">
+            <Link href="sobre-nos" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-white/90 hover:text-white hover:bg-blue-default rounded-lg transition-colors text-sm font-medium">
               Sobre
             </Link>
           </div>
