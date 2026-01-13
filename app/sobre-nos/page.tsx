@@ -5,9 +5,9 @@ import { TechStack } from "@/components/TechStack";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
 
 const teamMembers = [
-  { name: "Vicente Pascoal", role: "Data Science", img: "/logo.svg", linkedin: "https://www.linkedin.com/in/vicente-venancio-pascoal", github: "https://github.com/Vicente-VP" },
+  { name: "Vicente Pascoal", role: "Data Science", img: "/team/foto-vicente.jpeg", linkedin: "https://www.linkedin.com/in/vicente-venancio-pascoal", github: "https://github.com/Vicente-VP" },
   { name: "Lisane Zanatta", role: "Data Science", img: "/logo.svg", linkedin: "https://www.linkedin.com/in/lisane-lucia-zanatta-225677317", github: "https://github.com/laisallz" },
-  { name: "Kaike de Souza", role: "Data Science", img: "/logo.svg", linkedin: "https://www.linkedin.com/in/kaike-gabriel-marques-de-souza-042975333", github: "https://github.com/KaikeGM" },
+  { name: "Kaike de Souza", role: "Data Science", img: "/team/foto-kaike.jpeg", linkedin: "https://www.linkedin.com/in/kaike-gabriel-marques-de-souza-042975333", github: "https://github.com/KaikeGM" },
   { name: "Ludmila Garcia", role: "Data Science", img: "/team/foto-ludmila.jpeg", linkedin: "https://www.linkedin.com/in/ludmila-garcia/", github: "https://github.com/Ludmila-Garcia" },
   { name: "Raphael Medeiros", role: "Backend", img: "/python.svg", linkedin: "https://www.linkedin.com/in/rmedeirosdev", github: "https://github.com/rmedeirosdev" },
   { name: "Cássia Nascimento", role: "Backend", img: "/python.svg", linkedin: "https://www.linkedin.com/in/cassia-irene", github: "https://github.com/cassia-irene" },
@@ -23,11 +23,16 @@ export default function SobreNos() {
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-600 py-28 px-6 text-center overflow-hidden rounded-b-3xl">
         <h1 className="text-5xl md:text-6xl font-bold mb-6 opacity-0 animate-fade-in">
-          Sobre Nós
+        Projeto MoodMatrix
         </h1>
-        <p className="text-xl md:text-2xl max-w-3xl mx-auto opacity-0 animate-fade-in delay-200">
-          Somos um time apaixonado por tecnologia e inovação, desenvolvendo soluções inteligentes para transformar dados em decisões.
+        <p className="text-xl md:text-2xl max-w-3xl mx-auto opacity-0 animate-fade-in delay-200 text-left md:text-justify leading-relaxed">
+          Nascemos da conexão entre 8 mentes inquietas e apaixonadas por tecnologia, todos unidos pela jornada de aprendizado do Programa ONE (Oracle Next Education). No cenário desafiador do Hackathon ONE, decidimos que nossa missão não seria apenas processar dados, mas sim decifrar as emoções por trás deles. 
+          <br /><br />
+          Assim surgiu o MoodMatrix: um projeto que reflete nossa diversidade e colaboração. Combinamos os conhecimentos técnicos adquiridos em nossa formação com uma visão humana e estratégica para transformar o feedback bruto de milhares de usuários em caminhos claros para o sucesso de qualquer negócio. 
+          <br /><br />
+          Mais do que desenvolvedores, somos tradutores de sentimentos. Estamos aqui para provar que, com a tecnologia certa e um time sintonizado, é possível transformar palavras em decisões inteligentes e transformar dados em empatia.
         </p>
+
       </section>
 
       {/* Missão, Visão, Valores */}
