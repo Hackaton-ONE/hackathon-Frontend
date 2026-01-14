@@ -19,13 +19,13 @@ export default function AnalisarPage() {
       <main className="flex flex-col justify-center gap-5 ">
         <Input_sentimento setResultado={setResultado} setLoading={setLoading}/>
         
-        <div className="flex justify-center">
+        <div className="flex justify-center my-4">
           <Image
             width={100}  
             height={10}
             src="/seta_analisar.png"
             alt="Seta"
-            className=""
+            className="md:rotate-0 w-12 md:w-[100px]"
           />
         </div>
 
