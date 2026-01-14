@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ResultadoIA } from "../types";
+import { ResultadoSentimento } from "../types";
 
 type InputSentimentoProps = {
-  setResultado: React.Dispatch<React.SetStateAction<ResultadoIA | null>>;
+  setResultado: React.Dispatch<React.SetStateAction<ResultadoSentimento | null>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -12,27 +12,36 @@ type InputSentimentoProps = {
 export default function Input_sentimento({ setResultado, setLoading }: InputSentimentoProps) {
     
     const [text, setText] = useState("");
+    const [isChecked, setIsChecked] = useState(false);
+    const apiUrl = isChecked ? `${process.env.NEXT_PUBLIC_API_URL}/tradutor` : `${process.env.NEXT_PUBLIC_API_URL}/sentiment`;
+
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         try {
           setLoading(true);
-          const res = await fetch("/sua-api/analisar", {
+          const res = await fetch(apiUrl, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ comentarios: text }),
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJSYXBoYWVsIiwiaWF0IjoxNzY4MTU1NTM4LCJleHAiOjE3NjgxNTkxMzh9.4kxUeTTDyUBckjA1da6NpeWFziypjO4PdYwz4rucMhg` },
+            body: JSON.stringify({ texto: text }),
           });
       
           const data = await res.json();
           setResultado(data);
-        } finally {
+        } catch(error) {
+            const err = error as Error;
+            console.log(isChecked)
+            console.log(apiUrl)
+            return { success: false, error: err.message };
+        }
+        finally {
           setLoading(false);
         }
     }
     return (
             <section className="mt-24 flex w-full justify-center">
                 <div className="w-[900px] h-[450px] rounded-2xl border border-white bg-blue-600/35 p-10 shadow-xl backdrop-blur-md">
-                    <form className="flex flex-col items-center gap-16">
+                    <form className="flex flex-col items-center gap-16" onSubmit={handleSubmit}>
                         <div className="w-full flex flex-col justify-center">
                             <div className="relative w-full">
                                 <textarea
@@ -58,13 +67,17 @@ export default function Input_sentimento({ setResultado, setLoading }: InputSent
                                     "
                                 />            
                             </div>
-                            <div className="flex w-full justify-end">
+                            <div className="flex w-full justify-end items-center gap-5">
+                                <div className="flex items-center gap-2">
+                                    <input type="checkbox" className="h-4 w-4" checked={isChecked} onChange={(e) => setIsChecked(e.target.checked)}/><span className="text-lg text-white">Usar Tradutor</span>
+                                </div>
                                 <div className="w-20 rounded-md bg-blue-500 px-3 py-1 text-sm text-white text-center">
                                     {text.length}/5000
                                 </div>
                             </div>
                         </div>
 
+                    
                         <button
                             type="submit"
                             disabled={text.length === 0}

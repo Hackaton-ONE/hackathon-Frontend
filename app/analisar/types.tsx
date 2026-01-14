@@ -1,8 +1,9 @@
 export type ResultadoSentimento = {
-  sentimento: "positivo" | "negativo";
-  confianca: number;
+  id: number;
+  texto: string;
+  sentimento: "Positivo" | "Negativo";
+  probabilidade: number;
+  usuario: string;
+  data: string;
 };
 
-export type ResultadoIA = {
-  resultados: ResultadoSentimento[];
-};

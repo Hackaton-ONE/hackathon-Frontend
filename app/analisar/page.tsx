@@ -1,12 +1,15 @@
+"use client";
+
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
-import { ResultadoIA } from "./types"; 
+import { ResultadoSentimento } from "./types"; 
 import Input_sentimento from "./Componentes/Input_sentimento";
 import Sentimentos from "./Componentes/Sentimentos";
 import Image from "next/image";
 
 export default function AnalisarPage() {
-const [resultado, setResultado] = useState<ResultadoIA | null>(null);
+
+  const [resultado, setResultado] = useState<ResultadoSentimento | null>(null);
   const [loading, setLoading] = useState(false);
 
   return (
