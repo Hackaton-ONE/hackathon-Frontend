@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
-import { ResultadoSentimento } from "./types"; 
-import Input_sentimento from "./Componentes/Input_sentimento";
-import Sentimentos from "./Componentes/Sentimentos";
+import { InputSentimento } from "../../components/analisar/InputSentimento";
+import Sentimentos from "../../components/analisar/Sentimentos";
 import Image from "next/image";
+import { ResultadoSentimento } from "@/types/sentiment";
 
 export default function AnalisarPage() {
 
@@ -17,7 +17,7 @@ export default function AnalisarPage() {
       <Navbar />
 
       <main className="flex flex-col justify-center gap-5 ">
-        <Input_sentimento setResultado={setResultado} setLoading={setLoading}/>
+        <InputSentimento setResultado={setResultado} setLoading={setLoading}/>
         
         <div className="flex justify-center">
           <Image

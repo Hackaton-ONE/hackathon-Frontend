@@ -114,7 +114,7 @@ export function Navbar() {
             ) : (
                // === USUÁRIO DESLOGADO (Desktop) ===
                <Link href="/login">
-                  <button className="bg-neon-green text-mood-dark hover:bg-emerald-400 font-poppins font-bold text-sm px-6 py-2.5 rounded-lg transition-all shadow-md hover:shadow-lg hover:scale-105">
+                  <button className="bg-neon-green text-white hover:bg-emerald-400 font-poppins font-bold text-sm px-6 py-2.5 rounded-md transition-all shadow-md hover:shadow-lg hover:scale-105">
                     Entrar / Cadastrar
                   </button>
                </Link>

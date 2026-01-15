@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { Filter, X, Calendar, CheckCircle2, AlertCircle, MessageSquare } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Filter, X, Calendar, CheckCircle2, AlertCircle, MessageSquare, RotateCw } from "lucide-react";
+import { useSession } from "next-auth/react";
 
-// 1. Tipagem dos dados
+// 1. Tipagem Visual
 
 interface HistoryItem {
   id: string;
@@ -15,79 +16,106 @@ interface HistoryItem {
 
 }
 
-
-
-const historyData: HistoryItem[] = [
-
-  {
-    id: "#095",
-    text: "O sistema é muito rápido e...",
-    fullText: "O sistema é muito rápido e responsivo. Gostei bastante da interface nova, mas acho que o botão de login poderia ser maior.",
-    date: "20/12",
-    confidence: "98%",
-    status: "Positivo",
-
-  },
-
-  {
-    id: "#094",
-    text: "Travou tudo quando tentei...",
-    fullText: "Travou tudo quando tentei exportar o relatório em PDF. A tela ficou branca e tive que reiniciar o navegador.",
-    date: "20/12",
-    confidence: "94%",
-    status: "Negativo",
-
-  },
-
-  {
-    id: "#093",
-    text: "Estou impressionado com a...",
-    fullText: "Estou impressionado com a precisão da análise. Bateu exatamente com o feedback que recebemos na loja física.",
-    date: "19/12",
-    confidence: "98%",
-    status: "Positivo",
-
-  },
-
-  {
-    id: "#092",
-    text: "Péssima experiência. O aplic...",
-    fullText: "Péssima experiência. O aplicativo fecha sozinho toda vez que tento abrir a aba de configurações. Preciso de ajuda urgente.",
-    date: "18/12",
-    confidence: "95%",
-    status: "Negativo",
-  },
-
-  {
-
-    id: "#091",
-    text: "Já abri dois chamados e nin...",
-    fullText: "Já abri dois chamados e ninguém me respondeu. O suporte está deixando a desejar, apesar da ferramenta ser boa.",
-    date: "28/12",
-    confidence: "89%",
-    status: "Negativo",
-
-  },
-
-];
-
-
+// 2. Tipagem do Backend
+interface ComentarioBackend {
+  id: number;
+  texto: string;
+  sentimento: string;
+  probabilidade: number;
+  data: string | number[]; 
+}
 
 export function RecentHistory() {
 
+const { data: session } = useSession();
+  const [data, setData] = useState<HistoryItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedSentiment, setSelectedSentiment] = useState("Todos");
   const [selectedDate, setSelectedDate] = useState("");
-
-  // 2. Usa a Interface para tipar o estado corretamente
   const [selectedItem, setSelectedItem] = useState<HistoryItem | null>(null);
 
-  const filteredData = historyData.filter((item) => {
+  // --- FUNÇÃO AUXILIAR PARA FORMATAR DATA ---
+  const formatJavaDate = (dateData: string | number[]) => {
+    try {
+        if (!dateData) return "N/A";
 
+        // Caso 1: Array do Java [2026, 1, 15, 13, 30]
+        if (Array.isArray(dateData)) {
+            const [ano, mes, dia] = dateData;
+            const dateObj = new Date(ano, mes - 1, dia);
+            return dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        }
+
+        // Caso 2: String Formatada "2026-01-15 13:00" ou ISO
+        // O replace substitui espaço por T para garantir compatibilidade com todos navegadores
+        const dateString = String(dateData).replace(" ", "T");
+        const dateObj = new Date(dateString);
+        return dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+
+    } catch {
+        return "Data Inválida";
+    }
+  };
+
+const fetchHistory = useCallback(async () => {
+    if (!session?.accessToken) return;
+
+    try {
+      setLoading(true);
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090";
+      
+      // Adicionamos um timestamp na URL (?t=...) para garantir que a URL seja sempre única
+      // E também a opção cache: 'no-store' para garantir
+      const res = await fetch(`${baseUrl}/sentiment/historico?t=${new Date().getTime()}`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${session.accessToken}`,
+          "Content-Type": "application/json"
+        },
+        cache: "no-store", // <--- OBRIGA O NAVEGADOR A NÃO USAR CACHE
+      });
+
+      if (!res.ok) throw new Error("Erro ao buscar histórico");
+
+      const backendData: ComentarioBackend[] = await res.json();
+
+      const formattedData: HistoryItem[] = backendData.map((item) => {
+        const dateStr = formatJavaDate(item.data);
+        const rawProb = Math.round(item.probabilidade * 100);
+        const realConfidence = item.sentimento === "Positivo" ? (100 - rawProb) : rawProb;
+
+        return {
+          id: `#${item.id}`,
+          text: item.texto.length > 40 ? item.texto.substring(0, 40) + "..." : item.texto,
+          fullText: item.texto,
+          date: dateStr,
+          confidence: `${realConfidence}%`,
+          status: item.sentimento === "Positivo" ? "Positivo" : "Negativo"
+        };
+      });
+
+      setData(formattedData.reverse());
+
+    } catch (error) {
+      console.error("Falha no histórico:", error);
+    } finally {
+      // Pequeno timeout artificial para você ver o spinner girando (UX)
+      // Às vezes é tão rápido que nem vemos o loading
+      setTimeout(() => setLoading(false), 500); 
+    }
+  }, [session]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
+
+  // --- FILTROS ---
+  const filteredData = data.filter((item) => {
     const matchSentiment = selectedSentiment === "Todos" || item.status === selectedSentiment;
     const matchDate = !selectedDate || item.date.includes(selectedDate);
     return matchSentiment && matchDate;
-
   });
 
   return (
@@ -103,20 +131,26 @@ export function RecentHistory() {
             Histórico Recente
           </h3>
 
-          <button
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className={`p-2 rounded-lg transition-all duration-200 border ${
-              isFilterOpen
-                ? "bg-neon-red/20 text-neon-red border-neon-red"
+          <div className="flex gap-2">
+            <button onClick={fetchHistory} className="p-2 rounded-lg bg-white/5 text-white hover:bg-white/10 border border-white/10" title="Atualizar">
+               <RotateCw size={20} className={loading ? "animate-spin" : ""} />
+            </button>
 
-                : "bg-white/5 text-white border-white/10 hover:bg-white/10"
-            }`}
+            <button
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className={`p-2 rounded-lg transition-all duration-200 border ${
+                isFilterOpen
+                  ? "bg-neon-red/20 text-neon-red border-neon-red"
 
-          >
+                  : "bg-white/5 text-white border-white/10 hover:bg-white/10"
+              }`}
 
-            {isFilterOpen ? <X size={20} /> : <Filter size={20} />}
+            >
 
-          </button>
+              {isFilterOpen ? <X size={20} /> : <Filter size={20} />}
+
+            </button>
+          </div>
         </div>
 
         {/* FILTROS */}
@@ -146,9 +180,7 @@ export function RecentHistory() {
                       }`}
 
                     >
-
                       {option}
-
                     </button>
                   ))}
                 </div>
@@ -180,17 +212,49 @@ export function RecentHistory() {
 
 
         {/* TABELA (Desktop) */}
-        <div className="hidden md:block overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto max-h-[400px] overflow-y-auto custom-scrollbar">
 
-          <table className="w-full">
+          <table className="w-full relative">
 
-            <thead>
+            <thead className="sticky top-0 bg-[#0F172A] z-10 shadow-sm shadow-white/5">
               <tr className="border-b border-white/40">
-                <th className="text-center text-white font-medium text-sm pb-3 pr-4">ID</th>
-                <th className="text-center text-white font-medium text-sm pb-3 pr-4">Texto (Snippet)</th>
-                <th className="text-center text-white font-medium text-sm pb-3 pr-4">Data</th>
-                <th className="text-center text-white font-medium text-sm pb-3 pr-4">Confiança</th>
-                <th className="text-center text-white font-medium text-sm pb-3">Status</th>
+                
+                {/* ID */}
+                <th className="pr-4">
+                  {/* h-16 define a altura da barra. items-center centraliza verticalmente. justify-center centraliza horizontalmente. */}
+                  <div className="flex items-center justify-center h-16 w-full text-white font-medium text-sm">
+                    ID
+                  </div>
+                </th>
+
+                {/* Texto (Snippet) */}
+                <th className="pr-4">
+                  <div className="flex items-center justify-center h-16 w-full text-white font-medium text-sm">
+                    Texto (Snippet)
+                  </div>
+                </th>
+
+                {/* Data */}
+                <th className="pr-4">
+                  <div className="flex items-center justify-center h-16 w-full text-white font-medium text-sm">
+                    Data
+                  </div>
+                </th>
+
+                {/* Confiança */}
+                <th className="pr-4">
+                  <div className="flex items-center justify-center h-16 w-full text-white font-medium text-sm">
+                    Confiança
+                  </div>
+                </th>
+
+                {/* Status */}
+                <th>
+                  <div className="flex items-center justify-center h-16 w-full text-white font-medium text-sm">
+                    Status
+                  </div>
+                </th>
+                
               </tr>
             </thead>
 
@@ -254,7 +318,7 @@ export function RecentHistory() {
         </div>
 
         {/* CARDS (Mobile) */}
-        <div className="md:hidden space-y-4">
+        <div className="md:hidden space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar">
 
           {filteredData.length > 0 ? (
             filteredData.map((item, index) => (

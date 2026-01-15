@@ -11,3 +11,18 @@ export type Estatisticas = {
   POSITIVO?: number;
   NEGATIVO?: number;
 };
+
+export type ResultadoSentimento = {
+  id: number;
+  texto: string;
+  sentimento: "Positivo" | "Negativo";
+  probabilidade: number;
+  
+  usuario: {
+    id: number;
+    usuario: string;
+  }
+  
+  dataComentario: string;
+};
+
