@@ -60,7 +60,7 @@ export function Navbar() {
             <div className="flex items-center gap-6 font-poppins">
               <NavLink href="/">Início</NavLink>
               <NavLink href="/dashboard">Dashboard</NavLink>
-              <NavLink href="#sobre">Sobre</NavLink>
+              <NavLink href="/sobre-nos">Sobre</NavLink>
             </div>
 
             <Link href="/analisar">
