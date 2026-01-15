@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Poppins, MuseoModerno } from "next/font/google"; // 1. Importar Poppins
 import "./globals.css";
+import { Providers } from "@/components/Providers";
 
 
 // 2. Configurar Inter
@@ -37,8 +38,9 @@ export default function RootLayout({
     <html lang="pt-br">
       {/* 4. Adicionar ambas as variáveis no body */}
       <body className={`${inter.variable} ${poppins.variable} ${museo.variable} bg-mood-dark text-white font-sans antialiased`}>
-      
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

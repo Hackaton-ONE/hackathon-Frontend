@@ -16,12 +16,12 @@ export function TechStack() {
 
   return (
     <section className="py-12 md:py-24 px-4 lg:px-8 relative z-20"> {/* z-20 para ficar acima de qualquer glow residual */}
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-4xl xl:max-w-6xl mx-auto">
         
         {/* Container Escuro e Longo (Igual à imagem) */}
         <div className="bg-blue-default/10 backdrop-blur-md border-2 border-blue-default/20 rounded-3xl p-6 lg:p-10 shadow-2xl">
           
-          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 lg:gap-12">
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 xl:gap-16">
             
             {technologies.map((tech, index) => (
               <div
@@ -31,12 +31,12 @@ export function TechStack() {
                 {/* O Bloco Azul Sólido */}
                 <div className="
                   w-16 h-16 md:w-20 md:h-20 
-                  bg-blue-default 
+                  bg-blue-dark 
                   rounded-2xl 
                   flex items-center justify-center 
-                  shadow-lg shadow-blue-900/40 
+                  shadow-lg shadow-blue-dark/50 
                   transition-all duration-300 
-                  group-hover:scale-110 group-hover:bg-blue-600
+                  group-hover:scale-110 group-hover:bg-blue-default
                   border border-white/10
                 ">
                   {/* Ícone SVG Branco */}
@@ -51,8 +51,8 @@ export function TechStack() {
                   </div>
                 </div>
 
-                {/* Tooltip opcional (Nome da tecnologia) */}
                 <span className="
+                  hidden lg:block
                   absolute -bottom-8 left-1/2 -translate-x-1/2 
                   text-xs font-poppins text-white
                   opacity-0 group-hover:opacity-100 transition-opacity

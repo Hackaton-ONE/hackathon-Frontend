@@ -1,7 +1,62 @@
+"use client";
+
 import Link from "next/link";
-import { Button } from "./Button"; // Importando seu botão personalizado
+import { useRouter, usePathname } from "next/navigation";
+import { Button } from "./Button";
+import { ChevronRight } from "lucide-react";
 
 export function HeroSection() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Função mágica de suavização (Ease In Out Quad)
+  // t = tempo atual, b = valor inicial, c = mudança no valor, d = duração
+  const easeInOutQuad = (t: number, b: number, c: number, d: number) => {
+    t /= d / 2;
+    if (t < 1) return (c / 2) * t * t + b;
+    t--;
+    return (-c / 2) * (t * (t - 2) - 1) + b;
+  };
+
+  const smoothScrollTo = (elementId: string) => {
+    const target = document.getElementById(elementId);
+    if (!target) return;
+
+    // Configurações
+    const headerOffset = 100; // Espaço para a Navbar não cobrir o título
+    const duration = 1500; // Duração em ms (1.5 segundos - bem suave)
+
+    const targetPosition = target.getBoundingClientRect().top + window.scrollY;
+    const startPosition = window.scrollY;
+    const distance = targetPosition - startPosition - headerOffset;
+    let startTime: number | null = null;
+
+    const animation = (currentTime: number) => {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      
+      const run = easeInOutQuad(timeElapsed, startPosition, distance, duration);
+      
+      window.scrollTo(0, run);
+
+      if (timeElapsed < duration) requestAnimationFrame(animation);
+    };
+
+    requestAnimationFrame(animation);
+  };
+
+  const handleScrollToFlow = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (pathname === "/") {
+      // Se estiver na Home, usa nossa animação personalizada
+      smoothScrollTo("IntelligenceFlow");
+    } else {
+      // Se estiver fora, navega normal
+      router.push("/#IntelligenceFlow");
+    }
+  };
+
   return (
     <section className="relative pt-32 lg:pt-48 pb-20 px-4">
       
@@ -9,12 +64,7 @@ export function HeroSection() {
           ELEMENTOS DECORATIVOS DE FUNDO (GLOWS)
           ========================================= */}
       
-{/* 1. ELIPSE MAIOR (Direita/Topo) 
-          x: 946.5, y: -78.06 -> right-0 top-[-78px] (Ajustado para responsivo)
-          w: 743.5, h: 817.56 -> w-[743px] h-[817px]
-          fill: 60A5FA 30% -> bg-blue-light/30
-          blur: 160 -> blur-[160px]
-      */}
+{/* 1. ELIPSE MAIOR (Direita/Topo) */}
       <div 
         className="
           absolute 
@@ -30,12 +80,7 @@ export function HeroSection() {
         " 
       />
       
-      {/* 2. ELIPSE MENOR (Esquerda/Baixo) 
-          x: -90, y: 546 -> left-[-90px] top-[546px]
-          w: 282, h: 343 -> w-[282px] h-[343px]
-          fill: 60A5FA 30% -> bg-blue-light/30
-          blur: 160 -> blur-[160px]
-      */}
+      {/* 2. ELIPSE MENOR (Esquerda/Baixo) */}
       <div 
         className="
           absolute 
@@ -71,16 +116,19 @@ export function HeroSection() {
         {/* BOTÕES DE AÇÃO (CTA) */}
         <div className="flex flex-col sm:flex-row gap-6 md:gap-8 2xl:gap-10 w-full sm:w-auto">
           <Link href="/analisar">
-            <Button variant="primary" className="w-full sm:w-auto text-lg px-8 lg:px-10 py-4 bg-blue-default hover:bg-neon-green font-poppins">
+            <Button variant="primary" className="w-full sm:w-auto text-lg px-8 lg:px-10 py-4 bg-blue-default hover:bg-neon-green font-poppins shadow-[0px_4px_4px_0px_#2563EB40] hover:shadow-[0px_4px_4px_0px_#10B98140] transition-shadow duration-300">
               Começar Análise
             </Button>
           </Link>
 
-          <Link href="#como-funciona">
-            <Button variant="outline" className="w-full sm:w-auto text-lg px-8 py-4 bg-white  font-poppins">
-              Como Funciona ›
+            <Button
+              onClick={handleScrollToFlow}
+              variant="outline" 
+              className="group w-full sm:w-auto text-lg px-8 py-4 bg-white text-mood-dark font-poppins shadow-[0px_4px_4px_0px_#FFFFFF40] flex items-center gap-0.5">
+              Como Funciona 
+              <ChevronRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" />
             </Button>
-          </Link>
+          
         </div>
 
       </div>
