@@ -145,7 +145,7 @@ export function Navbar() {
             <Link href="/dashboard" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-white/90 hover:text-white hover:bg-blue-default rounded-lg transition-colors font-poppins text-sm font-semibold">
               Dashboard
             </Link>
-            <Link href="#sobre" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-white/90 hover:text-white hover:bg-blue-default rounded-lg transition-colors font-poppins text-sm font-semibold">
+            <Link href="/sobre-nos" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-white/90 hover:text-white hover:bg-blue-default rounded-lg transition-colors font-poppins text-sm font-semibold">
               Sobre
             </Link>
           </div>
