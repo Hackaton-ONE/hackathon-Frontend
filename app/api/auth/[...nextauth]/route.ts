@@ -33,8 +33,10 @@ const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         try {
-          // Chama o Java para fazer Login
-          const res = await fetch("http://localhost:8090/auth/login", {
+          
+          const baseUrl = "https://mood-matrix-backend.onrender.com";
+
+          const res = await fetch(`${baseUrl}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

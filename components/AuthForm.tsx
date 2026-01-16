@@ -49,6 +49,8 @@ export function AuthForm() {
   const onSubmit = async (data: AuthFormData) => {
     setIsLoading(true);
 
+    const baseUrl = "https://mood-matrix-backend.onrender.com";
+
     if (isLogin) {
       
       // === LOGIN ===
@@ -71,7 +73,7 @@ export function AuthForm() {
       // === CADASTRO ===
       try {
        
-        const response = await fetch("http://localhost:8090/auth/registrar", {
+        const response = await fetch(`${baseUrl}/auth/registrar`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
