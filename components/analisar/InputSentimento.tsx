@@ -25,7 +25,8 @@ export function InputSentimento({ setResultado, setLoading }: InputSentimentoPro
     e.preventDefault()
 
     
-     const token = session?.accessToken;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const token = (session as any)?.accessToken;
 
     if (!token) {
       alert("Você precisa estar logado para analisar!");

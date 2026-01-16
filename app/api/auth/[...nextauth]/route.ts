@@ -47,7 +47,6 @@ const authOptions: NextAuthOptions = {
 
           const user = await res.json();
 
-          
           if (!res.ok || !user.token) {
             return null;
           }
@@ -55,7 +54,7 @@ const authOptions: NextAuthOptions = {
           
           return {
             id: credentials?.usuario || "id",
-            name: user.usuario.split('@')[0], 
+            name: user.usuario ? user.usuario.split('@')[0] : "Usuário",
             email: credentials?.usuario,
             token: user.token, 
           };
@@ -69,23 +68,23 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     
     async jwt({ token, user }) {
-      
       if (user) {
         token.accessToken = user.token;
       }
       return token;
     },
     
+    
     async session({ session, token }) {
-      
-      session.accessToken = token.accessToken;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (session as any).accessToken = token.accessToken;
       return session;
     },
   },
   pages: {
     signIn: "/login", 
   },
-  secret: process.env.NEXTAUTH_SECRET || "segredo-do-hackathon", 
+  secret: process.env.NEXTAUTH_SECRET || "segredo-do-hackathon-123", 
 };
 
 const handler = NextAuth(authOptions);
