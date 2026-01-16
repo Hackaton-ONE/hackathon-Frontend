@@ -24,8 +24,8 @@ export function InputSentimento({ setResultado, setLoading }: InputSentimentoPro
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const token = (session as any)?.accessToken;
+    
+     const token = session?.accessToken;
 
     if (!token) {
       alert("Você precisa estar logado para analisar!");

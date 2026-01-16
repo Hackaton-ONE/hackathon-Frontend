@@ -77,8 +77,8 @@ const authOptions: NextAuthOptions = {
     },
     
     async session({ session, token }) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (session as any).accessToken = token.accessToken;
+      
+      session.accessToken = token.accessToken;
       return session;
     },
   },
