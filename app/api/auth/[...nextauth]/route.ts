@@ -1,94 +1,64 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-// Tipagem para o TypeScript não reclamar
-declare module "next-auth" {
-  interface Session {
-    accessToken?: string;
-    user: {
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-    }
-  }
-  interface User {
-    token?: string;
-    usuario?: string;
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    accessToken?: string;
-  }
-}
-
 const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        usuario: { label: "Email", type: "email" },
-        senha: { label: "Password", type: "password" }
+        email: { label: "Email", type: "email" },
+        senha: { label: "Senha", type: "password" },
       },
       async authorize(credentials) {
         try {
-          
-          const baseUrl = "https://mood-matrix-backend.onrender.com";
-
-          const res = await fetch(`${baseUrl}/auth/login`, {
+          // Ajuste a URL se necessário (ex: localhost:8080)
+          const res = await fetch("http://localhost:8080/auth/login", { 
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              usuario: credentials?.usuario,
+              email: credentials?.email,
               senha: credentials?.senha,
             }),
           });
 
-          const user = await res.json();
+          if (!res.ok) return null;
 
-          // Se o Java retornou erro ou não tem token, falha o login
-          if (!res.ok || !user.token) {
-            return null;
+          // O Backend retorna o token como TEXTO (String), não JSON
+          const token = await res.text(); 
+
+          if (token) {
+            // Retornamos um objeto com o token para o NextAuth salvar
+            return { id: "1", email: credentials?.email, accessToken: token };
           }
-
-          // Retorna o objeto usuário com o Token do Java
-          return {
-            id: credentials?.usuario || "id",
-            name: user.usuario.split('@')[0], // Pega o nome antes do @
-            email: credentials?.usuario,
-            token: user.token, // O token 
-          };
-        } catch (error) {
-          console.error("Erro no login:", error);
+          return null;
+        } catch (e) {
+          console.error(e);
           return null;
         }
       },
     }),
   ],
   callbacks: {
-    // 1. O Token JWT é gerado/atualizado
     async jwt({ token, user }) {
-      // Se for o primeiro login, o objeto 'user' existe.
-      // Pega o token que veio do Java e salva no Cookie JWT.
+      // Passa o token do login para o JWT interno
       if (user) {
-        token.accessToken = user.token;
+        token.accessToken = (user as any).accessToken;
       }
       return token;
     },
-    // 2. A Sessão é entregue para o Front (useSession)
     async session({ session, token }) {
-      // Pega o token do Cookie JWT e coloca na Sessão visível
-      session.accessToken = token.accessToken;
+      // Passa o token do JWT para a sessão do navegador
+      if (token) {
+        (session as any).accessToken = token.accessToken;
+      }
       return session;
     },
   },
   pages: {
-    signIn: "/login", // Se der erro, volta pra cá
+    signIn: "/login",
   },
-  secret: process.env.NEXTAUTH_SECRET || "segredo-do-hackathon", // Chave interna do Next
+  secret: process.env.NEXTAUTH_SECRET || "segredo_hackathon",
 };
 
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };
