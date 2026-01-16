@@ -1,93 +1,162 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useSession } from "next-auth/react";
-import Button from "../Button";
-import GlassCard from "../GlassCard";
-import { ArrowRight } from "lucide-react";
+import type React from "react"
+import { ResultadoSentimento } from "@/types/sentiment"
+import { useState } from "react"
+import { ChevronRight } from "lucide-react"
+import { useSession } from "next-auth/react"
 
-export default function InputSentimento() {
+type InputSentimentoProps = {
+  setResultado: React.Dispatch<React.SetStateAction<ResultadoSentimento | null>>
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export function InputSentimento({ setResultado, setLoading }: InputSentimentoProps) {
+  const [text, setText] = useState("")
+  const [isChecked, setIsChecked] = useState(false)
+
   const { data: session } = useSession();
-  const [texto, setTexto] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [usarTradutor, setUsarTradutor] = useState(false);
 
-  const handleAnalise = async () => {
-    if (!texto) return alert("Digite um texto!");
-    
-    // Verificação de segurança da sessão
-    if (!session || !(session as any).accessToken) {
-        return alert("Sessão expirada. Faça login novamente.");
+  const baseUrl = "https://mood-matrix-backend.onrender.com";
+  const endpoint = isChecked ? "/sentiment/tradutor" : "/sentiment";
+  const apiUrl = `${baseUrl}${endpoint}`;
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const token = (session as any)?.accessToken;
+
+    if (!token) {
+      alert("Você precisa estar logado para analisar!");
+      return;
     }
 
-    setLoading(true);
     try {
-      // Define o endpoint: Se marcou tradutor, usa /tradutor, senão usa o padrão
-      const endpoint = usarTradutor ? "/sentiment/tradutor" : "/sentiment";
+      setLoading(true)
       
-      const res = await fetch(`http://localhost:8080${endpoint}`, {
+      const res = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Envia o token no padrão Bearer
-          "Authorization": `Bearer ${(session as any).accessToken}`
+          // Usa o token no formato Bearer
+          "Authorization": `Bearer ${token}` 
         },
-        body: JSON.stringify({ texto }),
-      });
+        body: JSON.stringify({ texto: text }),
+      })
 
-      if (res.status === 403 || res.status === 401) {
-        alert("Sessão inválida. Por favor, faça login novamente.");
-        return;
+      if (!res.ok) {
+        if (res.status === 403) throw new Error("Sessão expirada. Faça login novamente.");
+        throw new Error(`Erro na API: ${res.status}`);
       }
 
-      const data = await res.json();
-      
-      // Exibe o resultado num alerta simples (como era antes)
-      alert(`Sentimento: ${data.sentimento}\nProbabilidade: ${(data.probabilidade * 100).toFixed(2)}%`);
+      const data = await res.json()
+      setResultado(data)
       
     } catch (error) {
-      console.error(error);
-      alert("Erro ao conectar com o servidor.");
+      const err = error as Error
+      console.error(err)
+      alert(err.message)
+      return { success: false, error: err.message }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <GlassCard className="p-6">
-        <h2 className="text-xl font-bold mb-4 text-white">Análise de Sentimento</h2>
-        
-        <div className="flex items-center gap-2 mb-4">
-            <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-300 hover:text-white">
-                <input 
-                    type="checkbox" 
-                    checked={usarTradutor} 
-                    onChange={(e) => setUsarTradutor(e.target.checked)}
-                    className="w-4 h-4 rounded bg-white/10 border-white/20"
-                />
-                Ativar Tradutor Automático (Google Gemini)
-            </label>
-        </div>
+    <section className="relative mt-24 flex w-full justify-center px-4">
+      {/* --- GLOW EFFECT --- */}
+      <div 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[80%] md:w-[600px] rounded-full bg-white/15 blur-[180px] z-10 pointer-events-none" 
+        aria-hidden="true"
+      />
 
-        <textarea
-          className="w-full h-32 bg-black/20 border border-white/10 rounded-xl p-4 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-none transition-all"
-          placeholder="Digite seu comentário aqui..."
-          value={texto}
-          onChange={(e) => setTexto(e.target.value)}
-        />
-        
-        <div className="flex justify-end mt-4">
-          <Button 
-            onClick={handleAnalise} 
-            disabled={loading}
-            className="flex items-center gap-2"
+      {/* --- CARD PRINCIPAL --- */}
+      <div className="relative z-10 w-full max-w-4xl rounded-2xl border border-blue-default bg-blue-default/10 p-8 md:p-10 shadow-[-4px_-4px_8px_0_rgba(0,0,0,0.25),4px_4px_8px_0_rgba(0,0,0,0.25)] backdrop-blur-md">
+        <form className="flex flex-col items-center gap-8" onSubmit={handleSubmit}>
+          <div className="w-full flex flex-col gap-4">
+            <div className="relative w-full">
+              <textarea
+                id="sentiment-text"
+                name="sentiment-text"
+                maxLength={5000}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Cole seu texto, review ou comentário aqui para revelar o sentimento oculto..."
+                className="
+                  h-48
+                  md:h-56
+                  w-full
+                  resize-none
+                  rounded-2xl
+                  border
+                  border-white/60
+                  bg-blue-light/40
+                  p-5
+                  md:p-8
+                  font-inter
+                  font-regular
+                  text-white
+                  text-base
+                  text-center
+                  placeholder-white
+                  outline-none
+                  focus:border-blue-default
+                  transition-all
+                "
+              />
+            </div>
+
+            <div className="flex w-full justify-between items-center">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="translator-checkbox"
+                  className="h-4 w-4 rounded border-neon-green bg-neon-green text-white cursor-pointer"
+                  checked={isChecked}
+                  onChange={(e) => setIsChecked(e.target.checked)}
+                />
+                <label htmlFor="translator-checkbox" className="font-inter font-medium text-base text-white cursor-pointer select-none">
+                  Usar Tradutor
+                </label>
+              </div>
+
+              <div className="rounded-lg bg-blue-dark border border-blue-default px-3 py-1.5 text-sm font-inter font-bold text-white">
+                {text.length}/5000
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={text.length === 0}
+            className={`
+              flex
+              items-center
+              gap-2
+              rounded-full
+              bg-gradient-to-r
+              from-blue-default
+              to-neon-green
+              px-8
+              py-3.5
+              text-base
+              font-poppins
+              font-semibold
+              text-white
+              transition-all
+              duration-300
+              hover:shadow-lg
+              hover:shadow-cyan-500/50
+              hover:scale-105
+              ${text.length === 0 ? "opacity-50 cursor-not-allowed hover:scale-100 hover:shadow-none" : ""}
+            `}
           >
-            {loading ? "Analisando..." : "Analisar"} 
-            {!loading && <ArrowRight className="w-4 h-4" />}
-          </Button>
-        </div>
-      </GlassCard>
-    </div>
-  );
+            Analisar Sentimento
+            <ChevronRight className="w-5 h-5" strokeWidth={3} />
+          </button>
+        </form>
+      </div>
+    </section>
+  )
 }

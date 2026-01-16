@@ -1,60 +1,93 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+
+declare module "next-auth" {
+  interface Session {
+    accessToken?: string;
+    user: {
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    }
+  }
+  interface User {
+    token?: string;
+    usuario?: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    accessToken?: string;
+  }
+}
+
 const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
-        senha: { label: "Senha", type: "password" },
+        usuario: { label: "Email", type: "email" },
+        senha: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
         try {
-          const res = await fetch("http://localhost:8080/auth/login", {
+          
+          const baseUrl = "https://mood-matrix-backend.onrender.com";
+
+          const res = await fetch(`${baseUrl}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              email: credentials?.email,
+              usuario: credentials?.usuario,
               senha: credentials?.senha,
             }),
           });
 
-          if (!res.ok) return null;
+          const user = await res.json();
 
-          // O PULO DO GATO: Lê como texto porque o Java manda String pura
-          const token = await res.text(); 
-
-          if (token) {
-            return { id: "1", email: credentials?.email, accessToken: token };
+          
+          if (!res.ok || !user.token) {
+            return null;
           }
-          return null;
-        } catch (e) {
-          console.error(e);
+
+          
+          return {
+            id: credentials?.usuario || "id",
+            name: user.usuario.split('@')[0], 
+            email: credentials?.usuario,
+            token: user.token, 
+          };
+        } catch (error) {
+          console.error("Erro no login:", error);
           return null;
         }
       },
     }),
   ],
   callbacks: {
+    
     async jwt({ token, user }) {
+      
       if (user) {
-        token.accessToken = (user as any).accessToken;
+        token.accessToken = user.token;
       }
       return token;
     },
+    
     async session({ session, token }) {
-      if (token) {
-        (session as any).accessToken = token.accessToken;
-      }
+      
+      session.accessToken = token.accessToken;
       return session;
     },
   },
   pages: {
-    signIn: "/login",
+    signIn: "/login", 
   },
-  secret: process.env.NEXTAUTH_SECRET || "segredo_hackathon",
+  secret: process.env.NEXTAUTH_SECRET || "segredo-do-hackathon", 
 };
 
 const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };
