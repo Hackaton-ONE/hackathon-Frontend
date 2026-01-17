@@ -9,7 +9,7 @@ const teamMembers = [
   { name: "Lisane Zanatta", role: "Data Science", img: "/team/foto-lisane.jpeg", linkedin: "https://www.linkedin.com/in/lisane-lucia-zanatta-225677317", github: "https://github.com/laisallz" },
   { name: "Kaike de Souza", role: "Data Science", img: "/team/foto-kaike.jpeg", linkedin: "https://www.linkedin.com/in/kaike-gabriel-marques-de-souza-042975333", github: "https://github.com/KaikeGM" },
   { name: "Ludmila Garcia", role: "Data Science", img: "/team/foto-ludmila.jpeg", linkedin: "https://www.linkedin.com/in/ludmila-garcia/", github: "https://github.com/Ludmila-Garcia" },
-  { name: "Raphael Medeiros", role: "Backend", img: "/python.svg", linkedin: "https://www.linkedin.com/in/rmedeirosdev", github: "https://github.com/rmedeirosdev" },
+  { name: "Raphael Medeiros", role: "Backend", img: "/team/foto-raphael.jpeg", linkedin: "https://www.linkedin.com/in/rmedeirosdev", github: "https://github.com/rmedeirosdev" },
   { name: "Cássia Nascimento", role: "Backend", img: "/python.svg", linkedin: "https://www.linkedin.com/in/cassia-irene", github: "https://github.com/cassia-irene" },
   { name: "Júlia de Oliveira", role: "Backend", img: "/team/foto-julia.jpeg", linkedin: "https://www.linkedin.com/in/julia-kellen-oliveira", github: "https://github.com/juliadevcode" },
 ];
