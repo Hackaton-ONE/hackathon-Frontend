@@ -18,7 +18,7 @@ export function WhyChoose() {
             
             {/* Parágrafo Descritivo */}
             <p className="font-poppins text-#FFFFFF text-regular xl:text-xl leading-snug md:max-w-xl lg:max-w-md xl:max-w-full">
-              Elimine a ambiguidade onde a neutralidade falha. Unindo a robustez do Java à inteligência do Python,
+              Eliminamos a ambiguidade onde a neutralidade falha. Unindo a robustez do Java à inteligência do Python,
               entregamos classificações binárias precisas para transformar opiniões em decisões imediatas.
             </p>
           </div>
