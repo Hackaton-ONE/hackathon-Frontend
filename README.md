@@ -1,4 +1,4 @@
-# MoodMatrix — Frontend Dashboard
+# MoodMatrix — Frontend
 
 > **“Eliminamos a ambiguidade onde a neutralidade falha.”**
 
