@@ -11,7 +11,7 @@ const teamMembers = [
   { name: "Kaike de Souza", role: "Data Science", img: "/team/foto-kaike.jpeg", linkedin: "https://www.linkedin.com/in/kaike-gabriel-marques-de-souza-042975333", github: "https://github.com/KaikeGM" },
   { name: "Ludmila Garcia", role: "Data Science", img: "/team/foto-ludmila.jpeg", linkedin: "https://www.linkedin.com/in/ludmila-garcia/", github: "https://github.com/Ludmila-Garcia" },
   { name: "Raphael Medeiros", role: "Backend", img: "/team/foto-raphael.jpg", linkedin: "https://www.linkedin.com/in/rmedeirosdev", github: "https://github.com/rmedeirosdev" },
-  { name: "Cássia Nascimento", role: "Backend", img: "/team/foto-cassia.jpeg", linkedin: "https://www.linkedin.com/in/cassia-irene", github: "https://github.com/cassia-irene" },
+  { name: "Cássia Nascimento", role: "Backend", img: "/team/foto-cassia.jpeg", linkedin: "https://www.linkedin.com/in/cassia--nascimento", github: "https://github.com/cassia-nascimento" },
   { name: "Júlia de Oliveira", role: "Backend", img: "/team/foto-julia.jpeg", linkedin: "https://www.linkedin.com/in/julia-kellen-oliveira", github: "https://github.com/juliadevcode" },
 ];
 
