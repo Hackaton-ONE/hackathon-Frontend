@@ -1,6 +1,12 @@
-# MoodMatrix — Frontend
+<h1 align="center">
+  MoodMatrix — Frontend
+</h1>
+
+<div align="center">
 
 > **“Eliminamos a ambiguidade onde a neutralidade falha.”**
+
+</div>
 
 Interface **moderna, responsiva e segura** para transformar análises de sentimentos em **insights visuais acionáveis**, facilitando a tomada de decisão baseada em dados.
 
